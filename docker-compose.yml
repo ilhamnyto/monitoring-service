@@ -11,7 +11,7 @@ services:
     networks:
       - platform
     ports:
-      - "127.0.0.1:9091:9091"
+      - "127.0.0.1:9091:9090"
   grafana:
     container_name: grafana
     image: "grafana/grafana:latest"
