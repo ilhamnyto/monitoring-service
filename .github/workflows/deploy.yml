@@ -42,8 +42,7 @@ jobs:
 
       - name: Copy Files
         run: |
-          scp -r . \
-          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/services/monitoring
+          rsync -av --exclude='.git' --exclude='.github' ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/services/monitoring
 
       - name: Deploy
         run: |
