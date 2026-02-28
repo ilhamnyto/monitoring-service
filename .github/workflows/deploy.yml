@@ -1,0 +1,47 @@
+name: Deploy Monitoring
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Setup Environments
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          sudo mkdir -p /opt/services/monitoring
+          sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} /opt/services
+          EOF
+
+      - name: Copy Files
+        run: |
+          scp -r . \
+          ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/services/monitoring
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          cd /opt/services/monitoring
+          docker compose pull
+          docker compose down
+          docker compose up -d
+          EOF
