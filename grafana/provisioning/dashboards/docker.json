@@ -43,7 +43,7 @@
   ],
   "style": "dark",
   "timezone": "browser",
-  "editable": false,
+  "editable": true,
   "hideControls": false,
   "sharedCrosshair": true,
   "rows": [
