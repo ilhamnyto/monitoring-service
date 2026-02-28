@@ -56,11 +56,11 @@ services:
     networks:
       - platform
   
-  volumes:
-    prometheus_data:
-    grafana_data:
-  
-  networks:
-    platform:
-      external: true
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  platform:
+    external: true
       
